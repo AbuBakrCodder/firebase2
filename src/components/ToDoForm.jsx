@@ -1,25 +1,95 @@
-function ToDoForm() {
+import { useState, useEffect } from "react";
+import toast from "react-hot-toast";
+import { useFirestore } from "../hooks/useFirestore";
+import useCollection from "../hooks/useCollection";
+
+function ToDoForm({ editingId, setEditingId, title, setTitle, deadline, setDeadline, handleCancel }) {
+    const { addTodo, updateTodo } = useFirestore();
+    const { data: todos } = useCollection("mytodos");
+
+   
+
+    useEffect(() => {
+        if (editingId) {
+            const todo = todos.find(t => t.id === editingId);
+            if (todo) {
+                setTitle(todo.title);
+                setDeadline(todo.deadline);
+            }
+        }
+    }, [editingId, todos]);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        if (!title && !deadline) {
+            toast.error("Please provide title and deadline");
+            return;
+        }
+
+        if (editingId) {
+            updateTodo({
+                collName: "mytodos",
+                id: editingId,
+                data: { title, deadline, date: new Date() }
+            });
+            setEditingId(null);
+        } else {
+            addTodo({
+                collName: "mytodos",
+                data: { title, deadline, date: new Date() }
+            });
+        }
+
+        setTitle("");
+        setDeadline("");
+    };
+
     return (
         <div>
-            <form action="#" className="mx-auto w-[300px] space-y-4 rounded-lg border border-gray-300 bg-gray-100 p-6 my-5">
-                <h1 className="text-center text-2xl font-bold">Create your todos</h1>
-                <div>
-                    <label className="block text-sm font-medium text-gray-900" htmlFor="title">Title</label>
+            <form onSubmit={handleSubmit} className="mx-auto w-[300px] space-y-4 rounded-lg border border-gray-300 bg-gray-100 p-6 my-5">
+                <h1 className="text-center text-2xl font-bold">
+                    {editingId ? "Edit Todo" : "Create Your Todos"}
+                </h1>
 
-                    <input className="mt-1 w-full rounded-lg bg-white py-3 px-2 border-gray-300 focus:border-indigo-500 focus:outline-none" id="title" type="text" placeholder="Enter task" />
+                <div>
+                    <label className="block text-sm font-medium">Title</label>
+                    <input
+                        type="text"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        className="mt-1 w-full rounded-lg bg-white py-3 px-2 border"
+                    />
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium text-gray-900" htmlFor="deadl">Deadline</label>
-
-                    <input className="mt-1 w-full rounded-lg bg-white py-3 px-2 border-gray-300 focus:border-indigo-500 focus:outline-none" id="number" type="pass" placeholder="Enter deadline" />
+                    <label className="block text-sm font-medium">Deadline</label>
+                    <input
+                        type="number"
+                        value={deadline}
+                        onChange={(e) => setDeadline(e.target.value)}
+                        className="mt-1 w-full rounded-lg bg-white py-3 px-2 border"
+                    />
                 </div>
-                <button className="block w-full rounded-lg border border-indigo-600 bg-indigo-600 px-12 py-3 text-sm font-medium text-white transition-colors hover:bg-transparent hover:text-indigo-600" type="submit">
-                    Create todo
-            </button>
+
+                <div className="flex flex-col gap-2">
+                    <button type="submit" className="flex-1 rounded-lg bg-indigo-600 px-12 py-3 text-white">
+                        {editingId ? "Update Todo" : "Create Todo"}
+                    </button>
+
+                    {editingId && (
+                        <button
+                            type="button"
+                            onClick={handleCancel}
+                            className="flex-1 rounded-lg bg-red-500 px-12 py-3 text-white"
+                        >
+                            Cancel
+                        </button>
+                    )}
+                </div>
             </form>
         </div>
-    )
+    );
 }
 
-export default ToDoForm
+export default ToDoForm;
