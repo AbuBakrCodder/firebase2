@@ -1,11 +1,11 @@
-import { NavLink } from "react-router-dom"
+import { NavLink, Link } from "react-router-dom"
 
 function Navbar() {
     let user = true
     return (
         <header>
-            <div className="flex justify-between px-20 py-3">
-                <NavLink className="font-bold text-2xl" to="/">ToDo List</NavLink>
+            <div className="flex justify-between items-center px-20 py-3">
+                <Link className="font-bold text-2xl" to="/">ToDo List</Link>
                 {
                     user && (
                         <nav className="flex gap-5 items-center">
