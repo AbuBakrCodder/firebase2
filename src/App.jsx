@@ -5,15 +5,14 @@ import MyToDos from "./pages/MyToDos"
 import Login from "./pages/Login"
 import Register from "./pages/Register"
 import ProjectRoute from "./components/ProjectRoute"
-import { useState } from "react"
-
+import { useGlobalContext } from "./hooks/useGlobalContext.js"
 function App() {
-  const [user, setUser] = useState(false)
+  const {user} = useGlobalContext()
 
   const router = createBrowserRouter([{
     path: "/",
-    element: <ProjectRoute user={user} setUser={setUser}>
-      <Layout setUser={setUser}/>
+    element: <ProjectRoute user={user}>
+      <Layout/>
     </ProjectRoute>,
     children: [
       {
@@ -32,7 +31,7 @@ function App() {
   },
   {
     path: "/register",
-    element: user ? <Navigate to="/" /> : <Register setUser={setUser} />
+    element: user ? <Navigate to="/" /> : <Register />
   }
   ])
   return <RouterProvider router={router} />

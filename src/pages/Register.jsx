@@ -2,10 +2,16 @@ import { NavLink } from "react-router-dom"
 import { toast } from "react-hot-toast"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { useAuth } from "../hooks/useAuth"
 
-function Register({ setUser }) {
+function Register() {
     const [file, setFile] = useState(null)
     const navigate = useNavigate()
+    const { register } = useAuth()
+    const [displayname, setDisplayname] = useState("")
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
+
 
     const handlechange = (e) => {
         setFile(e.target.files[0])
@@ -18,33 +24,41 @@ function Register({ setUser }) {
             toast.error("Please select an image file")
             return
         }
+        if (!displayname || !email || !password) {
+            toast.error("Please fill all fields")
+            return
+        }
 
         const reader = new FileReader()
         reader.readAsDataURL(file)
 
         reader.onload = async () => {
-            const base64 = reader.result.split(',')[1]
-
-            const formdata = new FormData()
-            formdata.append("key", "5fb1caaa76367162350690221b08d97c")
-            formdata.append("image", base64)
-
             try {
+                const base64 = reader.result.split(",")[1]
+
+                const formdata = new FormData()
+                formdata.append("key", "5fb1caaa76367162350690221b08d97c")
+                formdata.append("image", base64)
+
                 const res = await fetch("https://api.imgbb.com/1/upload", {
                     method: "POST",
                     body: formdata
                 })
 
                 const data = await res.json()
-                console.log(data)
-                toast.success("Uploaded!")
-                e.target.reset()
-                setFile(null)
-                setUser(true)
-                navigate("/")
+                const imageUrl = data.data.url
 
+                await register({
+                    displayname,
+                    email,
+                    password,
+                    imageUrl
+                })
+
+                toast.success("Account created successfully")
+                navigate("/")
             } catch (err) {
-                toast.error(`Failed to upload image: ${err.message}`)
+                toast.error(err.message)
             }
         }
     }
@@ -56,19 +70,19 @@ function Register({ setUser }) {
                 <div>
                     <label className="block text-sm font-medium text-gray-900" htmlFor="name">Name</label>
 
-                    <input className="mt-1 w-full rounded-lg bg-white py-3 px-2 border-gray-300 focus:border-indigo-500 focus:outline-none" id="name" type="text" placeholder="Your name" />
+                    <input className="mt-1 w-full rounded-lg bg-white py-3 px-2 border-gray-300 focus:border-indigo-500 focus:outline-none" onChange={(e) => { setDisplayname(e.target.value) }} id="name" type="text" placeholder="Your name" />
                 </div>
 
                 <div>
                     <label className="block text-sm font-medium text-gray-900" htmlFor="email">Email</label>
 
-                    <input className="mt-1 w-full rounded-lg bg-white py-3 px-2 border-gray-300 focus:border-indigo-500 focus:outline-none" id="email" type="email" placeholder="Your email" />
+                    <input className="mt-1 w-full rounded-lg bg-white py-3 px-2 border-gray-300 focus:border-indigo-500 focus:outline-none" onChange={(e) => setEmail(e.target.value)} id="email" type="email" placeholder="Your email" />
                 </div>
 
                 <div>
                     <label className="block text-sm font-medium text-gray-900" htmlFor="pass">Create password</label>
 
-                    <input className="mt-1 w-full rounded-lg bg-white py-3 px-2 border-gray-300 focus:border-indigo-500 focus:outline-none" id="pass" type="password" placeholder="Your password" />
+                    <input className="mt-1 w-full rounded-lg bg-white py-3 px-2 border-gray-300 focus:border-indigo-500 focus:outline-none" onChange={(e) => setPassword(e.target.value)} id="pass" type="password" placeholder="Your password" />
                 </div>
                 <div>
                     <label htmlFor="File" className="block rounded border border-gray-300 p-4 text-gray-900 shadow-sm sm:p-6">

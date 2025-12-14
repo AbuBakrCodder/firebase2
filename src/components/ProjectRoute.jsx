@@ -1,12 +1,14 @@
 import { Navigate } from "react-router-dom"
+import { useAuthState } from "../hooks/useAuthState"
 
-function ProjectRoute({ user, children }) {
+const ProjectRoute = ({ children }) => {
+    const { user, loading } = useAuthState()
 
-    if (!user) {
-        return <Navigate to="/register" replace />
+    if (loading) {
+        return <div className="text-center mt-10">Loading...</div>
     }
 
-    return children
+    return user ? children : <Navigate to="/login" />
 }
 
 export default ProjectRoute
