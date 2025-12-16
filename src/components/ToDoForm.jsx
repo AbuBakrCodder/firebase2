@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useFirestore } from "../hooks/useFirestore";
 import useCollection from "../hooks/useCollection";
+import { auth } from "../firebase/firebaseConfig";
 
 function ToDoForm({ editingId, setEditingId, title, setTitle, deadline, setDeadline, handleCancel }) {
     const { addTodo, updateTodo } = useFirestore();
@@ -31,13 +32,13 @@ function ToDoForm({ editingId, setEditingId, title, setTitle, deadline, setDeadl
             updateTodo({
                 collName: "mytodos",
                 id: editingId,
-                data: { title, deadline, date: new Date() }
+                data: { title, deadline, date: new Date()}
             });
             setEditingId(null);
         } else {
             addTodo({
                 collName: "mytodos",
-                data: { title, deadline, date: new Date() }
+                data: { title, deadline, date: new Date(), userId: auth.currentUser.uid }
             });
         }
 
