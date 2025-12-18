@@ -15,9 +15,11 @@ function MyToDos() {
   };
 
   return (
-    <div className="w-full flex items-center justify-around">
-      <ToDoList title={title} setTitle={setTitle} deadline={deadline} setDeadline={setDeadline} editingId={editingId} todos={todos} setEditingId={setEditingId} handleCancel={handleCancel}/>
-      <div>
+    <div className="w-full flex flex-col lg:flex-row items-start lg:items-center justify-center lg:justify-around gap-6 p-4">
+      <div className="w-full lg:w-auto">
+        <ToDoList title={title} setTitle={setTitle} deadline={deadline} setDeadline={setDeadline} editingId={editingId} todos={todos} setEditingId={setEditingId} handleCancel={handleCancel}/>
+      </div>
+      <div className="w-full lg:w-auto">
         <ToDoForm title={title} setTitle={setTitle} deadline={deadline} setDeadline={setDeadline} editingId={editingId} setEditingId={setEditingId} handleCancel={handleCancel}/>
       </div>
     </div>
