@@ -2,11 +2,12 @@ import { NavLink, useNavigate } from "react-router-dom"
 import { useState } from "react"
 import { toast } from "react-hot-toast"
 import { useAuth } from "../hooks/useAuth"
+import { FaGoogle } from "react-icons/fa"
 
 function Login() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
-    const { login, loading } = useAuth()
+    const { login, loading, loginWithGoogle } = useAuth()
     const navigate = useNavigate()
 
     const handleSubmit = async (e) => {
@@ -62,14 +63,16 @@ function Login() {
                         onChange={(e) => setPassword(e.target.value)}
                     />
                 </div>
-
-                <button
-                    disabled={loading}
-                    className="block w-full rounded-lg border border-indigo-600 bg-indigo-600 px-12 py-3 text-sm font-medium text-white transition-colors hover:bg-transparent hover:text-indigo-600 disabled:opacity-50"
-                    type="submit"
-                >
-                    {loading ? "Logging in..." : "Log in"}
-                </button>
+                <div className="flex flex-col items-center justify-center gap-3">
+                    <button
+                        disabled={loading}
+                        className="block w-50 rounded-lg border border-indigo-600 bg-indigo-600 px-12 py-3 text-sm font-medium text-white transition-colors hover:bg-transparent hover:text-indigo-600 disabled:opacity-50"
+                        type="button"
+                    >
+                        {loading ? "Logging in..." : "Log in"}
+                    </button>
+                    <button className="flex items-center justify-center gap-3 w-50 rounded-lg border border-indigo-600 bg-indigo-600 px-12 py-3 text-sm font-medium text-white transition-colors hover:bg-transparent hover:text-indigo-600" type="button" onClick={loginWithGoogle}><FaGoogle /> Google</button>
+                </div>
 
                 <p className="text-center text-xl">
                     If you don't have an account,{" "}

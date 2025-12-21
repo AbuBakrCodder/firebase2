@@ -6,6 +6,7 @@ import Login from "./pages/Login"
 import Register from "./pages/Register"
 import ProjectRoute from "./components/ProjectRoute"
 import { useGlobalContext } from "./hooks/useGlobalContext.js"
+import Profile from "./pages/Profile.jsx"
 function App() {
   const {user} = useGlobalContext()
 
@@ -23,6 +24,10 @@ function App() {
         path: "/myToDos",
         element: <MyToDos />
       },
+      {
+        path: "/profile",
+        element: <Profile />
+      }
     ],
   },
   {

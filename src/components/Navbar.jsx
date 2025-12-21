@@ -55,6 +55,12 @@ function Navbar() {
                                 {modal && (
                                     <div className="absolute right-0 top-14 bg-white shadow-lg p-4 rounded-xl flex flex-col gap-2">
                                         <button
+                                            onClick={() => { navigate("/profile") }}
+                                            className="border px-3 py-1 rounded hover:bg-amber-400 hover:text-white"
+                                        >
+                                            Profile
+                                        </button>
+                                        <button
                                             onClick={handleLogout}
                                             className="border px-3 py-1 rounded hover:bg-amber-400 hover:text-white"
                                         >
@@ -100,6 +106,12 @@ function Navbar() {
                     {modal && (
 
                         <div className="flex flex-col gap-3 w-40 bg-white rounded-2xl p-5 absolute top-full">
+                            <button
+                                onClick={() => { navigate("/profile") }}
+                                className="border px-3 py-1 rounded hover:bg-amber-400 hover:text-white"
+                            >
+                                Profile
+                            </button>
                             <button
                                 onClick={handleLogout}
                                 className="border px-3 py-1 rounded hover:bg-amber-400 hover:text-white"

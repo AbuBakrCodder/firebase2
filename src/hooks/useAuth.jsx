@@ -3,17 +3,21 @@ import {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
     signOut,
-    updateProfile
+    updateProfile,
+    signInWithPopup,
 } from "firebase/auth"
-import { auth } from "../firebase/firebaseConfig"
-import { doc, setDoc, serverTimestamp, deleteDoc} from "firebase/firestore"
+import { auth, provider } from "../firebase/firebaseConfig"
+import { doc, setDoc, serverTimestamp, deleteDoc } from "firebase/firestore"
 import { db } from "../firebase/firebaseConfig"
 import { deleteUser } from "firebase/auth";
+import toast from "react-hot-toast"
+import { useNavigate } from "react-router-dom";
 
 
 export const useAuth = () => {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
+    const navigate = useNavigate();
 
     //  REGISTER
     const register = async ({ displayname, email, password, imageUrl }) => {
@@ -23,13 +27,11 @@ export const useAuth = () => {
 
             const res = await createUserWithEmailAndPassword(auth, email, password)
 
-            // Firebase Auth profile
             await updateProfile(res.user, {
                 displayName: displayname,
-                photoURL: imageUrl
+                photoURL: imageUrlz
             })
 
-            // Firestore users collection
             await setDoc(doc(db, "users", res.user.uid), {
                 uid: res.user.uid,
                 displayName: displayname,
@@ -88,5 +90,19 @@ export const useAuth = () => {
         }
     };
 
-    return { register, login, logout, handleDelete, loading, error }
+    // GOOGLE LOGIN 
+    const loginWithGoogle = () => {
+        signInWithPopup(auth, provider)
+            .then((result) => {
+                const user = result.user;
+                toast.success("Logged in with Google successfully")
+                navigate("/");
+
+            }).catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                toast.error(errorMessage)
+            });
+    }
+    return { register, login, logout, handleDelete, loginWithGoogle, loading, error }
 }
